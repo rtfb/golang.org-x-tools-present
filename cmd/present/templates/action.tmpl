@@ -55,7 +55,7 @@ It determines how the formatting actions are rendered.
 <iframe src="{{.URL}}"{{with .Height}} height="{{.}}"{{end}}{{with .Width}} width="{{.}}"{{end}}></iframe>
 {{end}}
 
-{{define "link"}}<p class="link"><a href="{{.URL}}" target="_blank">{{style .Label}}</a></p>{{end}}
+{{define "link"}}<p class="link"><a href="{{.URL}}" target="_blank" {{.DataAttr}}>{{style .Label}}</a></p>{{end}}
 
 {{define "html"}}{{.HTML}}{{end}}
 

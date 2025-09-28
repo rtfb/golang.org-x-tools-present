@@ -671,7 +671,7 @@ func parseAuthorURL(name, text string) Elem {
 		log.Printf("parsing %s author block: invalid URL %q: %v", name, text, err)
 		return nil
 	}
-	return Link{URL: u}
+	return Link{URL: u, DataAttr: _dataHRefEqualsText}
 }
 
 func parseTime(text string) (t time.Time, ok bool) {
@@ -703,7 +703,7 @@ func renderMarkdown(input []byte) (template.HTML, error) {
 	md := goldmark.New(goldmark.WithRendererOptions(html.WithUnsafe()))
 	reader := text.NewReader(input)
 	doc := md.Parser().Parse(reader)
-	fixupMarkdown(doc)
+	fixupMarkdown(doc, input)
 	var b strings.Builder
 	if err := md.Renderer().Render(&b, input, doc); err != nil {
 		return "", err
@@ -711,7 +711,7 @@ func renderMarkdown(input []byte) (template.HTML, error) {
 	return template.HTML(b.String()), nil
 }
 
-func fixupMarkdown(n ast.Node) {
+func fixupMarkdown(n ast.Node, input []byte) {
 	ast.Walk(n, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if entering {
 			switch n := n.(type) {
@@ -719,6 +719,12 @@ func fixupMarkdown(n ast.Node) {
 				n.SetAttributeString("target", []byte("_blank"))
 				// https://developers.google.com/web/tools/lighthouse/audits/noopener
 				n.SetAttributeString("rel", []byte("noopener"))
+			case *ast.AutoLink:
+				href := n.URL(input)
+				text := n.Label(input)
+				if bytes.Equal(href, text) {
+					n.SetAttributeString(_dataHRefEqualsText, nil)
+				}
 			}
 		}
 		return ast.WalkContinue, nil

@@ -6,19 +6,23 @@ package present
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/url"
 	"strings"
 )
+
+const _dataHRefEqualsText = "data-href-equals-text"
 
 func init() {
 	Register("link", parseLink)
 }
 
 type Link struct {
-	Cmd   string // original command from present source
-	URL   *url.URL
-	Label string
+	Cmd      string // original command from present source
+	URL      *url.URL
+	Label    string
+	DataAttr template.HTMLAttr
 }
 
 func (l Link) PresentCmd() string   { return l.Cmd }
@@ -43,7 +47,16 @@ func parseLink(ctx *Context, fileName string, lineno int, text string) (Elem, er
 		}
 		label = strings.Replace(url.String(), scheme, "", 1)
 	}
-	return Link{text, url, label}, nil
+	dataAttr := ""
+	if url.String() == label {
+		dataAttr = _dataHRefEqualsText
+	}
+	return Link{
+		Cmd:      text,
+		URL:      url,
+		Label:    label,
+		DataAttr: template.HTMLAttr(dataAttr),
+	}, nil
 }
 
 func renderLink(href, text string) string {
@@ -58,8 +71,13 @@ func renderLink(href, text string) string {
 	} else if !u.IsAbs() || u.Scheme == "javascript" {
 		target = "_self"
 	}
-
-	return fmt.Sprintf(`<a href="%s" target="%s">%s</a>`, href, target, text)
+	dataAttr := ""
+	if href == text {
+		dataAttr = _dataHRefEqualsText
+	}
+	return fmt.Sprintf(`<a href="%s" target="%s"%s>%s</a>`,
+		href, target, dataAttr, text,
+	)
 }
 
 // parseInlineLink parses an inline link at the start of s, and returns

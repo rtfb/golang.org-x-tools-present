@@ -252,6 +252,9 @@
     content: ' (' attr(href) ') ';
     font-size: 50%;
   }
+  a[data-href-equals-text]::after {
+    content: none !important;
+  }
 
   #help {
     display: none;
