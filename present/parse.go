@@ -637,14 +637,14 @@ func parseAuthors(name, sectionPrefix string, lines *Lines) (authors []Author, e
 		}
 
 		// Parse the line. Those that
-		// - begin with @ are twitter names,
+		// - begin with @ are mastodon names,
 		// - contain slashes are links, or
 		// - contain an @ symbol are an email address.
 		// The rest is just text.
 		var el Elem
 		switch {
 		case strings.HasPrefix(text, "@"):
-			el = parseAuthorURL(name, "http://twitter.com/"+text[1:])
+			el = parseAuthorURL(name, "https://mastodon.social/"+text)
 		case strings.Contains(text, ":"):
 			el = parseAuthorURL(name, text)
 		case strings.Contains(text, "@"):
