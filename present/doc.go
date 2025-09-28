@@ -379,4 +379,4 @@ Notes may appear anywhere within the slide text. For example:
 
 	: Presenter notes (subsequent paragraph(s))
 */
-package present // import "golang.org/x/tools/present"
+package present // import "github.com/rtfb/golang.org-x-tools-present/present"
