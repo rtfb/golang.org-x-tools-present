@@ -48,7 +48,7 @@ func parseLink(ctx *Context, fileName string, lineno int, text string) (Elem, er
 		label = strings.Replace(url.String(), scheme, "", 1)
 	}
 	dataAttr := ""
-	if url.String() == label {
+	if strings.HasSuffix(url.String(), label) {
 		dataAttr = _dataHRefEqualsText
 	}
 	return Link{
