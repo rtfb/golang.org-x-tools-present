@@ -102,6 +102,7 @@ func main() {
 		log.Print(localhostWarning)
 	}
 
+	log.Println("rtfb's fork")
 	log.Printf("Open your web browser and visit %s", origin.String())
 	if present.NotesEnabled {
 		log.Println("Notes are enabled, press 'N' from the browser to display them.")
